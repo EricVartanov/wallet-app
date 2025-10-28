@@ -45,7 +45,7 @@ class WalletController extends Controller
                 'user_id' => $user->id,
                 'balance' => $user->balance,
                 'message' => 'Deposit successful'
-            ], 200);
+            ]);
 
         } catch (\Throwable $e) {
 
@@ -175,9 +175,13 @@ class WalletController extends Controller
     }
 
 
-    public function balance(User $user_id): JsonResponse
+    public function balance(int $user_id): JsonResponse
     {
-        $user = User::findOrFail($user_id);
+        $user = User::find($user_id);
+
+        if (! $user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
         return response()->json([
             'user_id' => $user->id,
