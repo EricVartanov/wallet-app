@@ -1,17 +1,37 @@
-version: '3.9'
+# docker-compose.yml
+version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: wallet_app_php
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: wallet_db
+      DB_USERNAME: wallet
+      DB_PASSWORD: secret
+
   db:
     image: postgres:16
     container_name: wallet_app_db
     environment:
+      POSTGRES_DB: wallet_db
       POSTGRES_USER: wallet
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: wallet_db
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  db_data:
+  pgdata:
